@@ -32,54 +32,25 @@ module barrel_shifter (
 end
 
 	
-// second always block. If it is a left or right shift it sets the input 1 of Mux 2, Mux 3, and Mux 7 to 0. If it is rotate then
-// the value assigned to each Mux is inv_din[0], inv_din[1], and for 7 it is either inv_din[2] or inv_din[0]. 
-// for inv_din these are the values assigned to in the first always block when you inverse or don't
+// second always block. it checks if it is a shift or rotate. If it is shift then the input one of each mux will assign 0. 
+// if it is rotate then it will assign the inv_din to each corresponding mmux.
 	
 always_comb begin
-
+if (select == 0) begin
 mmux21 = 0;
 mmux31 = 0;
 mmux71 = 0;
-
-//Right Shift: select = 0, direction = 0
-if((select == 0) && (direction == 0)) begin
-mmux21 = 0;
-mmux31 = 0;
-mmux71 = 0;
-end
-
-
-//Right Rotate: select = 1, direction = 0
-if((select == 1) && (direction == 0)) begin
-mmux21 = inv_din[0];
-mmux31 = inv_din[1];
-if(shift_value[1]) begin
-mmux71 = inv_din[2];
 end else begin
+mmux21 = inv_din[1];
+mmux31 = inv_din[0];
+if (shift_value) begin
 mmux71 = inv_din[0];
-end
-end
-
-
-//Left Shift: select = 0, direction = 1
-if((select == 0) && (direction == 1)) begin
-mmux21 = 0;
-mmux31 = 0;
-mmux71 = 0;
-end
-
-//Left Rotate: select = 1, direction = 1
-if((select == 1) && (direction == 1)) begin
-mmux21 = inv_din[0];
-mmux31 = inv_din[1];
-if(shift_value[1]) begin
-mmux71 = inv_din[2];
 end else begin
-mmux71 = inv_din[0];
+mmux71 = inv_din[2];
 end
 end
 end
+
 
 	
 // third always block the flips inv_dout to dout
