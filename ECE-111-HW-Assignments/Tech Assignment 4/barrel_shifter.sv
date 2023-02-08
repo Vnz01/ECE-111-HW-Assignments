@@ -41,12 +41,12 @@ mmux21 = 0;
 mmux31 = 0;
 mmux71 = 0;
 end else begin
-mmux21 = inv_din[1];
-mmux31 = inv_din[0];
-if (shift_value) begin
-mmux71 = inv_din[0];
-end else begin
+mmux21 = inv_din[0];
+mmux31 = inv_din[1];
+if (shift_value[1]) begin
 mmux71 = inv_din[2];
+end else begin
+mmux71 = inv_din[0];
 end
 end
 end
