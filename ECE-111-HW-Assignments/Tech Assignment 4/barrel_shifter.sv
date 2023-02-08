@@ -7,18 +7,13 @@ module barrel_shifter (
   output logic[3:0] dout
 );
 
-  //mmux31,21,71 is a connection to input 1 of mux(number)
-//mux0mux4 is a connection from output of mux0 to mux4 and so on
   logic [3:0] inv_din;
   logic [3:0] inv_dout;
+logic [3:0] r_dout;
   logic mmux31, mmux21, mmux71, mux0mux4, mux1mux5, mux2mux6, mux3mux7;
 
-	
-// first of three always blocks. This block just inverts the din coming into the barrel shifter if it is going left. 
-// If it is right then it won't invert
-
   always_comb begin
-     if(direction == 1) begin
+	if(direction == 1) begin
        inv_din[0] <= din[3];
        inv_din[1] <= din[2];  
        inv_din[2] <= din[1];
@@ -31,8 +26,6 @@ module barrel_shifter (
   end
 end
 
-	// second always block. it checks if it is a shift or rotate. If it is shift then the input one of each mux will assign 0. 
-// if it is rotate then it will assign the inv_din to each corresponding mmux.	
 always_comb begin
 if (select == 0) begin
 mmux21 <= 0;
@@ -49,23 +42,28 @@ end
 end
 end
 
-// third always block the flips inv_dout to dout\
+
 always_comb begin
 if(direction == 1) begin
-	dout[0] <= inv_dout[3];
-	dout[1] <= inv_dout[2];  
-	dout[2] <= inv_dout[1];
-	dout[3] <= inv_dout[0];
+	r_dout[0] <= inv_dout[3];
+	r_dout[1] <= inv_dout[2];  
+	r_dout[2] <= inv_dout[1];
+	r_dout[3] <= inv_dout[0];
 end else begin
-	dout[0] <= inv_dout[0];
-	dout[1] <= inv_dout[1];  
-	dout[2] <= inv_dout[2];
-	dout[3] <= inv_dout[3];
+	r_dout[0] <= inv_dout[0];
+	r_dout[1] <= inv_dout[1];  
+	r_dout[2] <= inv_dout[2];
+	r_dout[3] <= inv_dout[3];
 end
 end
-	// i followed the dicussion slides when writing my code
-// mux connections
-// same connections in diagram from discussion slides
+
+always_comb begin
+	dout[0] <= r_dout[3];
+        dout[1] <= r_dout[2];  
+        dout[2] <= r_dout[1];
+        dout[3] <= r_dout[0];
+end
+
 mux_2x1 m0 (.in0(inv_din[0]),.in1(inv_din[2]),.sel(shift_value[1]),.out(mux0mux4));
 mux_2x1 m1 (.in0(inv_din[1]),.in1(inv_din[3]),.sel(shift_value[1]),.out(mux1mux5));
 mux_2x1 m2 (.in0(inv_din[2]),.in1(mmux21),.sel(shift_value[1]),.out(mux2mux6));
