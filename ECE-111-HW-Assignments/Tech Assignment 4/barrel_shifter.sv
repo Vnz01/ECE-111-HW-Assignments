@@ -34,34 +34,23 @@ mmux71 <= 0;
 end else begin
 mmux21 <= inv_din[0];
 mmux31 <= inv_din[1];
-if (shift_value[1]) begin
-mmux71 <= inv_din[2];
-end else begin
-mmux71 <= inv_din[0];
-end
+mmux71 <= mux0mux4;
 end
 end
 
 
 always_comb begin
 if(direction == 1) begin
-	r_dout[0] <= inv_dout[3];
-	r_dout[1] <= inv_dout[2];  
-	r_dout[2] <= inv_dout[1];
-	r_dout[3] <= inv_dout[0];
+	dout[0] <= inv_dout[0];
+	dout[1] <= inv_dout[1];  
+	dout[2] <= inv_dout[2];
+	dout[3] <= inv_dout[3];
 end else begin
-	r_dout[0] <= inv_dout[0];
-	r_dout[1] <= inv_dout[1];  
-	r_dout[2] <= inv_dout[2];
-	r_dout[3] <= inv_dout[3];
+	dout[0] <= inv_dout[3];
+	dout[1] <= inv_dout[2];  
+	dout[2] <= inv_dout[1];
+	dout[3] <= inv_dout[0];
 end
-end
-
-always_comb begin
-	dout[0] <= r_dout[3];
-        dout[1] <= r_dout[2];  
-        dout[2] <= r_dout[1];
-        dout[3] <= r_dout[0];
 end
 
 mux_2x1 m0 (.in0(inv_din[0]),.in1(inv_din[2]),.sel(shift_value[1]),.out(mux0mux4));
