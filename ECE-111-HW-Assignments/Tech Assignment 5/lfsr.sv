@@ -8,18 +8,19 @@ module lfsr
   output logic[N-1:0] lfsr_data
 );
 
-//Guidance on translating polynomials to HW though pseudocodes below
-//For N=4: polynomial is x^4+ x^3 + 1
-//the corrresponding pseudo-code for XOR gate given below. Notice that the index used is one less than the equation
-	//xor_output = lfsr_data[3] ^ lfsr_data[2];
+// N = 2, Poly: X^2 + X^1 + 1
+	// XOR Out = lsfr_data[1] ^ lsft_data[0]
+// N = 3, Poly: X^3 + X^2 + 1
+	// XOR Out = lsfr_data[2] ^ lsft_data[1]
+// N = 4, Poly: X^4 + X^3 + 1
+	// XOR Out = lsfr_data[3] ^ lsft_data[2]
+// N = 5, Poly: X^5 + X^3 + 1	
+	// XOR Out = lsfr_data[4] ^ lsft_data[2]
+// N = 6, Poly: X^6 + X^5 + 1	
+	// XOR Out = lsfr_data[5] ^ lsft_data[4]
+// N = 7, Poly: X^7 + X^6 + 1	
+	// XOR Out = lsfr_data[6] ^ lsft_data[5]
+// N = 8, Poly: X^8 + X^6 + X^5 + X^4 + 1
+	// XOR Out = lsfr_data[7] ^ lsft_data[5] ^ lsfr_data[4] ^ lsft_data[3]
 	
-//Another example, when N=5, the correponding polynomial is x^5 + x^3 + 1
-//this polynomial will yield XOR hardware shown by pseudo code below
-	//xor_output = lfsr_data[4] ^ lfsr_data[2];
-	
-//Note: We are tapping indexes which are one less than the exponent. This is because the numbering for the polynomial exponents starts from 1 and goes till N....whereas, the numbering convention we follow is starting from 0 going up to N-1. 
-
-
-//student to add implementation for LFSR code below
-
 endmodule: lfsr
