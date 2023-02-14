@@ -12,12 +12,14 @@ logic XOR_out;
 logic cycles;
 logic ctr;
 
+always @ (posedge reset) begin
 	if(load_seed == 1) begin
 		lsfr_data = seed_data;
 	end
 	
 	cycles = (2**N) - 1;
 	ctr = 0;
+end
 	
 always @ (posedge clk) begin
 	case(N)
