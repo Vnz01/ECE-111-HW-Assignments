@@ -11,7 +11,8 @@ module lfsr
 logic XOR_out;
 logic cycles;
 logic ctr;
-
+ // reset block that operates at posedge of reset and sets the lsfr data from the seed data it also sets the cycles needed for a full cycle and a ctr 
+// used in another block
 always @ (posedge reset) begin
 	if(load_seed == 1) begin
 		lsfr_data = seed_data;
@@ -20,7 +21,7 @@ always @ (posedge reset) begin
 	cycles = (2**N) - 1;
 	ctr = 0;
 end
-	
+// always block that uses cases to check for the N parameter and see how many ff to use.
 always @ (posedge clk) begin
 	case(N)
 	 8'h02: begin
@@ -76,6 +77,7 @@ always @ (posedge clk) begin
 	 XOR_out = 0;
    	 end
 	endcase
+// increments ctr until the amount of cycles in which then it will set lsfr done to lsfr data
 ctr++;
 lsfr_data[0] <= XOR_out;
 	
