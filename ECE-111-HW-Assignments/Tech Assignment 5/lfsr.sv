@@ -10,7 +10,33 @@ module lfsr
 	
 logic XOR_out;
 
-//always_comb 
+always @ (posedge clk) begin
+	case(N)
+	 4'b0010: begin
+	 polynomial = x^2 + x^1 + 1;
+	 end
+	 4'b0011: begin
+	 polynomial = x^3 + x^2 + 1;
+	 end
+	 4'b0100: begin
+	 polynomial = x^4 + x^3 + 1;
+	 end
+	 4'b0101: begin
+ 	 polynomial = x^5 + x^3 + 1;
+	 end
+	 4'b0110: begin
+ 	 polynomial = x^6 + x^5 + 1;
+	 end
+	 4'b0111: begin
+ 	 polynomial = x^7 + x^6 + 1;
+	 end
+	 4'b1000: begin
+ 	 polynomial = x^8 + x^6 + x^5 + x^4 + 1;
+	 end
+	endcase
+
+lsfr_data[0] <= XOR_out;
+
 // N = 2, Poly: X^2 + X^1 + 1
 	// XOR_out = lsfr_data[1] ^ lsft_data[0]
 	// lsft_data[0] <= XOR_out
@@ -32,5 +58,5 @@ logic XOR_out;
 // N = 8, Poly: X^8 + X^6 + X^5 + X^4 + 1
 	// XOR_out = lsfr_data[7] ^ lsft_data[5] ^ lsfr_data[4] ^ lsft_data[3]
 	// lsft_data[0] <= XOR_out
-	
+end
 endmodule: lfsr
