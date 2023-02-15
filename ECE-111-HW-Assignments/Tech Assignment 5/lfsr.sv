@@ -2,89 +2,43 @@
 module lfsr
 #(parameter N = 4) // Number of bits for LFSR
 (
-  input logic clk, reset, load_seed,
+  input logic clk, reset_n, load_seed,
   input logic[N-1:0] seed_data,
   output logic lfsr_done,
   output logic[N-1:0] lfsr_data
 );
 	
 logic XOR_out;
-logic cycles;
-logic ctr;
- // reset block that operates at posedge of reset and sets the lsfr data from the seed data it also sets the cycles needed for a full cycle and a ctr 
-// used in another block
-always @ (posedge reset) begin
-	if(load_seed == 1) begin
-		lsfr_data = seed_data;
-	end
-	
-	cycles = (2**N) - 1;
-	ctr = 0;
-end
-// always block that uses cases to check for the N parameter and see how many ff to use.
-always @ (posedge clk) begin
+
+always_comb 
+begin
+	XOR_out = 0;
 	case(N)
-	 8'h02: begin
-	 XOR_out = lsfr_data[1] ^ lsfr_data[0];
-		 lsfr_data[1] <= lsfr_data[0];
-	 end
-	 8'h03: begin
-	 XOR_out = lsfr_data[2] ^ lsfr_data[1];
-		 lsfr_data[2] <= lsfr_data[1];
-		 lsfr_data[1] <= lsfr_data[0];
-	 end
-	 8'h04: begin
-	 XOR_out = lsfr_data[3] ^ lsfr_data[2];
-		 lsfr_data[3] <= lsfr_data[2];
-		 lsfr_data[2] <= lsfr_data[1];
-		 lsfr_data[1] <= lsfr_data[0];
-	 end
-	 8'h05: begin
-	 XOR_out = lsfr_data[4] ^ lsfr_data[2];
-		 lsfr_data[4] <= lsfr_data[3];
-		 lsfr_data[3] <= lsfr_data[2];
-		 lsfr_data[2] <= lsfr_data[1];
-		 lsfr_data[1] <= lsfr_data[0];
-	 end
-	 8'h06: begin
-	 XOR_out = lsfr_data[5] ^ lsfr_data[4];
-		 lsfr_data[5] <= lsfr_data[4];
-		 lsfr_data[4] <= lsfr_data[3];
-		 lsfr_data[3] <= lsfr_data[2];
-		 lsfr_data[2] <= lsfr_data[1];
-		 lsfr_data[1] <= lsfr_data[0];
-	 end
-	 8'h07: begin
-	 XOR_out = lsfr_data[6] ^ lsfr_data[5];
-		 lsfr_data[6] <= lsfr_data[5];
-		 lsfr_data[5] <= lsfr_data[4];
-		 lsfr_data[4] <= lsfr_data[3];
-		 lsfr_data[3] <= lsfr_data[2];
-		 lsfr_data[2] <= lsfr_data[1];
-		 lsfr_data[1] <= lsfr_data[0];
-	 end
-	 8'h08: begin
-	 XOR_out = lsfr_data[7] ^ lsfr_data[5] ^ lsfr_data[4] ^ lsfr_data[3];
-		 lsfr_data[7] <= lsfr_data[6];
-		 lsfr_data[6] <= lsfr_data[5];
-		 lsfr_data[5] <= lsfr_data[4];
-		 lsfr_data[4] <= lsfr_data[3];
-		 lsfr_data[3] <= lsfr_data[2];
-		 lsfr_data[2] <= lsfr_data[1];
-		 lsfr_data[1] <= lsfr_data[0];
-	 end
-	 default: begin
-	 XOR_out = 0;
-   	 end
+	 2 : XOR_out = lfsr_data[1] ^ lfsr_data[0];
+	 3 : XOR_out = lfsr_data[2] ^ lfsr_data[1];
+	 4 : XOR_out = lfsr_data[3] ^ lfsr_data[2];
+	 5 : XOR_out = lfsr_data[4] ^ lfsr_data[2];
+	 6 : XOR_out = lfsr_data[5] ^ lfsr_data[4];
+	 7 : XOR_out = lfsr_data[6] ^ lfsr_data[5];
+	 8 : XOR_out = lfsr_data[7] ^ lfsr_data[5] ^ lfsr_data[4] ^ lfsr_data[3];
+	 default : XOR_out = 0;
 	endcase
-// increments ctr until the amount of cycles in which then it will set lsfr done to lsfr data
-ctr++;
-lsfr_data[0] <= XOR_out;
-	
-if (cycles == ctr) begin
-lsfr_done <= lsfr_data[N-1:0];
-ctr = 0;
 end
 
+always_ff@ (posedge clk or negedge reset_n) 
+begin
+	if(!reset_n)
+	 lfsr_data <= 'h0;
+	else
+	begin
+	 if(load_seed)
+	 lfsr_data = seed_data;
+	 else begin
+	lfsr_data[N-1:0] = {lfsr_data[N-2:0], XOR_out};
+	end	
 end
+end
+
+assign lfsr_done = (lfsr_data == seed_data);
+
 endmodule: lfsr
