@@ -10,10 +10,10 @@ logic ctr = 0;
   if (reset == 1) 
    clkout <= 0;
  else begin
-  ctr++;
-  if ((ctr % 1) == 0) begin
+  if ((ctr % 2) == 0) begin
    clkout <= ~clkout;
   end
+  ctr++;
  end
 
 endmodule: clock_divide_by_3
