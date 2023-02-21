@@ -34,6 +34,3 @@ module clock_divide_by_3(
 
 endmodule: clock_divide_by_3
  
-// clkout or gate
-  assign clkout = (ctr || rctr);
-endmodule: clock_divide_by_3
