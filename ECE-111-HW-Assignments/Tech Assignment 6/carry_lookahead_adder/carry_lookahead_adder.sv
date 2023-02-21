@@ -13,15 +13,14 @@ module carry_lookahead_adder#(parameter N=4)(
   
   genvar i;
   generate
-    for (i=0; i<N; i++) begin
+    for (i=0; i<N; i++) begin : block
       assign prop[i] = A[i] ^ B[i];
       assign gen[i] = A[i] & B[i];
       assign car[i+1] = gen[i] ^ prop[i] & car[i];
-      fulladder fa ((.a(A[i])),(.b(B[i])),(.cin(car[i])),(.sum([i])),(.cout()))
+      fulladder fa (.a(A[i]),.b(B[i]),.cin(car[i]),.sum(sum[i]),.cout());
     end
   endgenerate
     
   assign result = {car[N], sum};
  
 endmodule: carry_lookahead_adder
-
