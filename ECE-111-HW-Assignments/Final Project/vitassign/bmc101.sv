@@ -17,3 +17,4 @@ assign path_0_bmc[0] = tmp00 ^ tmp01;
 assign path_1_bmc[1] = tmp10 & tmp11;
 assign path_1_bmc[0] = tmp10 & tmp11;
 endmodule
+
