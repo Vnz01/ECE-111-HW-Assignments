@@ -9,9 +9,8 @@ logic tmp00 = rx_pair[1];
 logic tmp10;
 logic tmp11;
 
-tmp10 = !tmp00;
-tmp11 = !tmp01;
-
+assign tmp10 = !tmp00;
+assign tmp11 = !tmp01;
 assign path_0_bmc[1] = tmp00 & tmp01;
 assign path_0_bmc[0] = tmp00 ^ tmp01;
 assign path_1_bmc[1] = tmp10 & tmp11;
