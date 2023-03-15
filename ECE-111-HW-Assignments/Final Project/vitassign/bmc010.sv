@@ -4,11 +4,13 @@ module bmc010				  // branch metric computation
    output   [1:0] path_0_bmc,
    output   [1:0] path_1_bmc);
 
-logic tmp01 = rx_pair[0];
-logic tmp00 = rx_pair[1];
+logic tmp01;
+logic tmp00;
 logic tmp10;
 logic tmp11;
 
+assign tmp01 = rx_pair[0];
+assign tmp00 = rx_pair[1];
 assign tmp10 = !tmp00;
 assign tmp11 = !tmp01;
 
