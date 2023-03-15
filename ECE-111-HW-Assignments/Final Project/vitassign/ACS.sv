@@ -9,7 +9,7 @@ module ACS		                        // add-compare-select
 
    output logic        selection,
    output logic        valid_o,
-   output      [7:0] path_cost);  
+   output logic      [7:0] path_cost);  
 
    wire  [7:0] path_cost_0;			   // branch metric + path metric
    wire  [7:0] path_cost_1;
@@ -22,13 +22,13 @@ assign path_cost_1 = path_1_pmc + path_1_bmc;
 
 always_comb begin
 	if (valid_o && selection) begin
-		path_cost = path_cost_1;
+		path_cost[7:0] = path_cost_1[7:0];
 	end else if (valid_o) begin
-		path_cost = path_cost_0;
+		path_cost[7:0] = path_cost_0[7:0];
 	end else if (selection) begin
-		path_cost = 0;
+		path_cost[7:0] = 7'd0;
 	end else begin
-		path_cost = 0;
+		path_cost[7:0] = 7'd0;
 	end
 end
 
