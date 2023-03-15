@@ -6,7 +6,7 @@ module decoder
    input [1:0]       d_in,
    output logic      d_out);
 
-//   logic             decoder_o_reg;
+	logic decoder_o_reg;
 		
 //bmc module signals
    wire  [1:0]       bmc000_path_0_bmc;
@@ -121,10 +121,14 @@ module decoder
 
 //Branch matrc calculation modules
 
-   bmc000   bmc000_inst(d_in,bmc000_path_0_bmc,bmc000_path_1_bmc);
-/*  similarly for bmc001 through 111
-*/
-
+	bmc000   bmc000_inst(d_in,bmc000_path_0_bmc,bmc000_path_1_bmc);
+	bmc001   bmc001_inst(d_in,bmc001_path_0_bmc,bmc001_path_1_bmc);
+	bmc010   bmc010_inst(d_in,bmc010_path_0_bmc,bmc010_path_1_bmc);
+	bmc011   bmc011_inst(d_in,bmc011_path_0_bmc,bmc011_path_1_bmc);
+	bmc100   bmc100_inst(d_in,bmc100_path_0_bmc,bmc100_path_1_bmc);
+	bmc101   bmc101_inst(d_in,bmc101_path_0_bmc,bmc101_path_1_bmc);
+	bmc110   bmc110_inst(d_in,bmc110_path_0_bmc,bmc110_path_1_bmc);
+	bmc111   bmc111_inst(d_in,bmc111_path_0_bmc,bmc111_path_1_bmc);
 
 //Add Compare Select Modules
    ACS      ACS000(validity[0],validity[1],bmc000_path_0_bmc,bmc000_path_1_bmc,path_cost[0],path_cost[1],ACS000_selection,ACS000_valid_o,ACS000_path_cost);
@@ -146,16 +150,26 @@ module decoder
       if(!rst)  begin
          validity          <= 8'b00000001;
          selection         <= 8'b00000000;
-/* clear all 8 path costs
-         path_cost[i]      <= 8'd0;
-*/
+	      path_cost[0]      <= 8'd0;
+	      path_cost[1]      <= 8'd0;
+	      path_cost[2]      <= 8'd0;
+	      path_cost[3]      <= 8'd0;
+	      path_cost[4]      <= 8'd0;
+	      path_cost[5]      <= 8'd0;
+	      path_cost[6]      <= 8'd0;
+	      path_cost[7]      <= 8'd0;
       end
       else if(!enable)   begin
          validity          <= 8'b00000001;
          selection         <= 8'b00000000;
-/* clear all 8 path costs
-         path_cost[i]      <= 8'd0;
-*/
+	      path_cost[0]      <= 8'd0;
+	      path_cost[1]      <= 8'd0;
+	      path_cost[2]      <= 8'd0;
+	      path_cost[3]      <= 8'd0;
+	      path_cost[4]      <= 8'd0;
+	      path_cost[5]      <= 8'd0;
+	      path_cost[6]      <= 8'd0;
+	      path_cost[7]      <= 8'd0;
       end
       else if( path_cost[0][7] && path_cost[1][7] && path_cost[2][7] && path_cost[3][7] &&
              path_cost[4][7] && path_cost[5][7] && path_cost[6][7] && path_cost[7][7] )
@@ -164,17 +178,28 @@ module decoder
          validity          <= validity_nets;
          selection         <= selection_nets;
          
-         path_cost[0]      <= 8'b01111111 & ACS000_path_cost;
-/*  likewise for path_cost[1:7] and ACS001:111_path_cost
-*/
+              path_cost[0]      <= 8'b01111111 & ACS000_path_cost;
+	      path_cost[1]      <= 8'b01111111 & ACS001_path_cost;
+	      path_cost[2]      <= 8'b01111111 & ACS010_path_cost;
+	      path_cost[3]      <= 8'b01111111 & ACS011_path_cost;
+	      path_cost[4]      <= 8'b01111111 & ACS100_path_cost;
+	      path_cost[5]      <= 8'b01111111 & ACS101_path_cost;
+	      path_cost[6]      <= 8'b01111111 & ACS110_path_cost;
+	      path_cost[7]      <= 8'b01111111 & ACS111_path_cost;
+
       end
       else   begin
          validity          <= validity_nets;
          selection         <= selection_nets;
 
-         path_cost[0]      <= ACS000_path_cost;
-/* likewise for 1:7
-*/
+              path_cost[0]      <= ACS000_path_cost;
+	      path_cost[1]      <= ACS001_path_cost;
+	      path_cost[2]      <= ACS010_path_cost;
+	      path_cost[3]      <= ACS011_path_cost;
+	      path_cost[4]      <= ACS100_path_cost;
+	      path_cost[5]      <= ACS101_path_cost;
+	      path_cost[6]      <= ACS110_path_cost;
+	      path_cost[7]      <= ACS111_path_cost;
       end
    end
 
@@ -189,7 +214,7 @@ module decoder
 
    always @ (posedge clk, negedge rst) begin
       if(!rst)
-         rd_mem_counter <= // -1   how do you handle this in 10 bit binary?
+         rd_mem_counter <= 10'b1111111110
       else if(enable)
          rd_mem_counter <= rd_mem_counter - 10'd1;
    end
@@ -217,9 +242,11 @@ module decoder
             addr_mem_C        <= 10'd0;
             addr_mem_D        <= rd_mem_counter;
 
-            wr_mem_A          <= 1'b1;
-/* other wr_mems = 0
-*/	        
+            	 wr_mem_A          <= 1'b1;
+		 wr_mem_B          <= 1'b0;
+		 wr_mem_C          <= 1'b0;
+		 wr_mem_D	   <= 1'b0;
+
          end
          2'b01:         begin
             addr_mem_A        <= rd_mem_counter;
@@ -227,9 +254,11 @@ module decoder
             addr_mem_C        <= rd_mem_counter;
             addr_mem_D        <= 10'd0;
 
-            wr_mem_B          <= 1'b1;
-/* other wr_mems = 0
-*/	        
+            	 wr_mem_A          <= 1'b0;
+		 wr_mem_B          <= 1'b1;
+		 wr_mem_C          <= 1'b0;
+		 wr_mem_D	   <= 1'b0;
+		 
          end		       
          2'b10:    begin
             addr_mem_A        <= 10'd0;
@@ -237,9 +266,11 @@ module decoder
             addr_mem_C        <= wr_mem_counter;
             addr_mem_D        <= rd_mem_counter;
 
-            wr_mem_C       <= 1'b1;
-/* other wr_mems = 0
-*/	        
+            	 wr_mem_A          <= 1'b0;
+		 wr_mem_B          <= 1'b0;
+		 wr_mem_C          <= 1'b1;
+		 wr_mem_D	   <= 1'b0;
+		 
          end
          2'b11:     begin
             addr_mem_A        <= rd_mem_counter;
@@ -247,9 +278,11 @@ module decoder
             addr_mem_C        <= rd_mem_counter;
             addr_mem_D        <= wr_mem_counter;
 
-            wr_mem_D       <= 1'b1;
-/* other wr_mems = 0
-*/	        
+            	 wr_mem_A          <= 1'b0;
+		 wr_mem_B          <= 1'b0;
+		 wr_mem_C          <= 1'b0;
+		 wr_mem_D	   <= 1'b1;
+		 
          end		       
       endcase
   end
@@ -264,8 +297,31 @@ module decoder
       .d_i(d_in_mem_A),
       .d_o(d_o_mem_A)
    );
-/* likewise for trelis_memB, C, D
-*/
+   mem   trelis_mem_B
+   (
+      .clk,
+	   .wr(wr_mem_B),
+	   .addr(addr_mem_B),
+	   .d_i(d_in_mem_B),
+	   .d_o(d_o_mem_B)
+   );
+   mem   trelis_mem_C
+   (
+      .clk,
+	   .wr(wr_mem_C),
+	   .addr(addr_mem_C),
+	   .d_i(d_in_mem_C),
+	   .d_o(d_o_mem_C)
+   );
+   mem   trelis_mem_D
+   (
+      .clk,
+	   .wr(wr_mem_D),
+	   .addr(addr_mem_D),
+	   .d_i(d_in_mem_D),
+	   .d_o(d_o_mem_D)
+   );
+
 
 //Trace back module operation
 
@@ -345,16 +401,23 @@ module decoder
    tbu tbu_0   (
       .clk,
       .rst,
-      .enable(enable_tbu_0),
-      .selection(selection_tbu_0),
-      .d_in_0(d_in_0_tbu_0),
-      .d_in_1(d_in_1_tbu_0),
-      .d_o(d_o_tbu_0),
-      .wr_en(wr_disp_mem_0)
+	   .enable(enable_tbu_0),
+	   .selection(selection_tbu_0),
+	   .d_in_0(d_in_0_tbu_0),
+	   .d_in_1(d_in_1_tbu_0),
+	   .d_o(d_o_tbu_0),
+	   .wr_en(wr_disp_mem_0)
    );
-
-/* analogous for tbu_1
-*/
+   tbu tbu_1   (
+      .clk,
+      .rst,
+	   .enable(enable_tbu_1),
+	   .selection(selection_tbu_1),
+	   .d_in_0(d_in_0_tbu_1),
+	   .d_in_1(d_in_1_tbu_1),
+	   .d_o(d_o_tbu_1),
+	   .wr_en(wr_disp_mem_1)
+   );
 
 //Display Memory modules Instantioation
 
@@ -364,13 +427,19 @@ module decoder
   mem_disp   disp_mem_0
   (
       .clk              ,
-      .wr(wr_disp_mem_0),
-      .addr(addr_disp_mem_0),
-      .d_i(d_in_disp_mem_0),
-      .d_o(d_o_disp_mem_0)
+	  .wr(wr_disp_mem_0),
+	  .addr(addr_disp_mem_0),
+	  .d_i(d_in_disp_mem_0),
+	  .d_o(d_o_disp_mem_0)
    );
-/* analogous for disp_mem_1
-*/
+  mem_disp   disp_mem_1
+  (
+      .clk              ,
+	  .wr(wr_disp_mem_1),
+	  .addr(addr_disp_mem_1),
+	  .d_i(d_in_disp_mem_1),
+	  .d_o(d_o_disp_mem_1)
+   );
 
 // Display memory module operation
    always @ (posedge clk)
@@ -408,8 +477,10 @@ module decoder
    end
 
    always @ (posedge clk)
-/*  d_out = d_o_disp_mem_i 
-    i = mem_bank_buf_buf_buf_buf_buf 
-*/
+	   if (mem_bank_buf_buf_buf_buf_buf) begin
+		   d_out = d_o__disp_mem_1;
+	   end else begin
+	   	   d_out = d_o__disp_mem_0;
+	   end
 
 endmodule
