@@ -17,4 +17,34 @@ module ACS		                        // add-compare-select
 /* Fill in the guts per ACS instructions
 */
 
+assign path_cost_0 = path_0_pmc + path_0_bmc;
+assign path_cost_1 = path_1_pmc + path_1_bmc;
+
+assign_comb begin
+	if (valid_o && selection) begin
+		path_cost = path_cost_1;
+	end else if (valid_o) begin
+		path_cost = path_cost_0;
+	end else if (selection) begin
+		path_cost = 0;
+	end else begin
+		path_cost = 0;
+	end
+
+always_comb begin
+	if (!path_0_valid && !path_1_valid) begin
+		valid_o = 0;
+	end else begin
+		valid_o = 1;
+
+always_comb begin
+	if (path_0_valid && path_1_valid) begin
+		selection = 1;
+	end else if (path_0_valid) begin
+		selection = 0;
+	end else if (path_1_valid) begin
+		selection = 1;
+	end else begin
+		selection = 0;
+	end
 endmodule
