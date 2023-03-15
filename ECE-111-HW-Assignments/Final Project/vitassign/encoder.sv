@@ -9,16 +9,14 @@ module encoder                    // use this one
    
    logic         [2:0] cstate;
    logic         [2:0] nstate;
-   
    logic         [1:0] d_out_reg;
-
+   assign processed_in = d_in ^ cstate[1] ^ cstate[0];
    assign   d_out    =  (enable_i)? d_out_reg:2'b00;
 
    always_comb begin
       valid_o  =   enable_i;
-      case (cstate)
-// fill in the guts
-      endcase
+      nstate = {processed_in,cstate[2:1]};
+      d_out_reg = {processed_in ^ cstate[2] ^ cstate[0], d_in};
    end								   
 
    always @ (posedge clk,negedge rst)   begin
