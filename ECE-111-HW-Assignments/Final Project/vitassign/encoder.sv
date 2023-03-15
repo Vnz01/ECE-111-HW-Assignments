@@ -1,4 +1,5 @@
-module encoder
+// figure out what this encoder does -- differs a bit from Homework 7
+module encoder                    // use this one
 (  input             clk,
    input             rst,
    input             enable_i,
@@ -8,17 +9,84 @@ module encoder
    
    logic         [2:0] cstate;
    logic         [2:0] nstate;
+   
    logic         [1:0] d_out_reg;
-   assign processed_in = d_in ^ cstate[1] ^ cstate[0];
+
    assign   d_out    =  (enable_i)? d_out_reg:2'b00;
 
    always_comb begin
       valid_o  =   enable_i;
-      nstate = {processed_in,cstate[2:1]};
-      d_out_reg = {processed_in ^ cstate[2] ^ cstate[0], d_in};
+      case (cstate)
+	3'b000:
+		if (!d_in) begin
+			nstate = 0;
+			d_out_reg = 2'b00;
+		end else begin
+			nstate = 4;
+			d_out_reg = 2'b11;
+		end
+	3'b001:
+		if (!d_in) begin
+			nstate = 4;
+			d_out_reg = 2'b00;
+		end else begin
+			nstate = 0;
+			d_out_reg = 2'b11;
+		end
+	3'b010:
+		if (!d_in) begin
+			nstate = 5;
+			d_out_reg = 2'b10;
+		end else begin
+			nstate = 1;
+			d_out_reg = 2'b01;
+		end
+	3'b011:
+		if (!d_in) begin
+			nstate = 1;
+			d_out_reg = 2'b10;
+		end else begin
+			nstate = 5;
+			d_out_reg = 2'b01;
+		end
+	3'b100:
+		if (!d_in) begin
+			nstate = 2;
+			d_out_reg = 2'b10;
+		end else begin
+			nstate = 6;
+			d_out_reg = 2'b01;
+		end
+	3'b101:
+		if (!d_in) begin
+			nstate = 6;
+			d_out_reg = 2'b10;
+		end else begin
+			nstate = 2;
+			d_out_reg = 2'b01;
+		end
+	3'b110:
+		if (!d_in) begin
+			nstate = 7;
+			d_out_reg = 2'b00;
+		end else begin
+			nstate = 3;
+			d_out_reg = 2'b11;
+		end
+	3'b111:
+		if (!d_in) begin
+			nstate = 3;
+			d_out_reg = 2'b00;
+		end else begin
+			nstate = 7;
+			d_out_reg = 2'b11;
+		end
+
+      endcase
    end								   
 
    always @ (posedge clk,negedge rst)   begin
+//      $display("data in=%d state=%b%b%b data out=%b%b",d_in,reg_1,reg_2,reg_3,d_out_reg[1],d_out_reg[0]);
       if(!rst)
          cstate   <= 3'b000;
       else if(!enable_i)
@@ -26,4 +94,5 @@ module encoder
       else
          cstate   <= nstate;
    end
+
 endmodule
