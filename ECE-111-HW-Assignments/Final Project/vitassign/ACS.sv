@@ -30,12 +30,15 @@ assign_comb begin
 	end else begin
 		path_cost = 0;
 	end
+end
 
 always_comb begin
 	if (!path_0_valid && !path_1_valid) begin
 		valid_o = 0;
 	end else begin
 		valid_o = 1;
+	end
+end
 
 always_comb begin
 	if (path_0_valid && path_1_valid) begin
@@ -47,4 +50,5 @@ always_comb begin
 	end else begin
 		selection = 0;
 	end
+end
 endmodule
