@@ -112,6 +112,8 @@ module decoder
 
    wire                d_in_disp_mem_0;
    wire                d_in_disp_mem_1;
+   wire                d_o_disp_mem_0;
+   wire                d_o_disp_mem_1;
 
    logic   [9:0]       wr_mem_counter_disp;
    logic   [9:0]       rd_mem_counter_disp;
@@ -482,9 +484,9 @@ module decoder
 
    always @ (posedge clk)
 	   if (mem_bank_buf_buf_buf_buf_buf) begin
-		   d_out = d_o__disp_mem_1;
+		   d_out = d_o_disp_mem_1;
 	   end else begin
-	   	   d_out = d_o__disp_mem_0;
+	   	   d_out = d_o_disp_mem_0;
 	   end
 
 endmodule
