@@ -214,7 +214,7 @@ module decoder
 
    always @ (posedge clk, negedge rst) begin
       if(!rst)
-         rd_mem_counter <= 10'b1111111110
+         rd_mem_counter <= 10'b1111111110;
       else if(enable)
          rd_mem_counter <= rd_mem_counter - 10'd1;
    end
@@ -468,7 +468,11 @@ module decoder
             addr_disp_mem_0   <= rd_mem_counter_disp; 
             addr_disp_mem_1   <= wr_mem_counter_disp;
          end
-         1'b1:	 swap rd and wr 
+         1'b1:
+	 begin
+	    addr_disp_mem_0   <= wr_mem_counter_disp; 
+            addr_disp_mem_1   <= rd_mem_counter_disp;
+	 end	
       endcase
 
    always @ (posedge clk) begin
