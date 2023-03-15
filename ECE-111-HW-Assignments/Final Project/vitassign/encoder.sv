@@ -96,3 +96,4 @@ module encoder                    // use this one
    end
 
 endmodule
+ 
